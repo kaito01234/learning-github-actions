@@ -5,6 +5,8 @@ on:
     types: [assigned, opened, synchronize, reopened]
     paths:
       - "apps/service1/**"
+  issue_comment:
+    types: [created, edited]
     
 jobs:
   deploy-actions-dummy:
@@ -32,6 +34,7 @@ jobs:
               body: '**aaaaaaaaaaaa!!**\n' +
                 '- aaaaaaaaaaa\n' +
                 '    - https://www.google.com\n' +
-                '- password\n' +
-                '    - ```\\\\aaaaa\\SS$\\こんにちは\\testtest\\test\\漢字入力\\漢字入力.txt```'
+                '\n' +
+                'パスワードはこちら👇\n' +
+                'https://www.google.com'
             })
