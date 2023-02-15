@@ -77,6 +77,6 @@ jobs:
           echo "SLACK_NOTIFY: ${SLACK_NOTIFY}"
           echo ${{ github.sha }}
         env:
-          BRANCH: ${{ github.ref_name }}
+          BRANCH: ${{ env.BRANCH }}
           PR_NUMBER: ${{ env.PR_NUMBER }}
           SLACK_NOTIFY: ${{ env.SLACK_NOTIFY }}
