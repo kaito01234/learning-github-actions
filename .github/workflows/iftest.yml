@@ -58,7 +58,7 @@ jobs:
           SLACK_NOTIFY: ${{ github.event.inputs.slack_notify }}
 
       - name: Set environment (issue_comment)
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'issue_comment'
         run: |
           echo "PR_NUMBER=${PR_NUMBER}" >> $GITHUB_ENV
           echo "SLACK_NOTIFY=${ISSUE_COMMENT}" >> $GITHUB_ENV
