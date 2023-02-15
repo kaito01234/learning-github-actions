@@ -22,12 +22,10 @@ jobs:
       (
         github.event_name == 'issue_comment' &&
         contains(github.event.comment.html_url, '/pull/') &&
-        startsWith(github.event.comment.body, 'レビュー環境作成します')
+        startsWith(github.event.comment.body, '/deploy')
       )
 
     steps:
-      - run: echo "event - ${{ toJSON(github) }}"
-          
       - name: Checkout (workflow_dispatch)
         if: github.event_name != 'issue_comment'
         uses: actions/checkout@v3
@@ -38,9 +36,10 @@ jobs:
         if: github.event_name == 'issue_comment'
         id: upstreambranch
         run: |
-          echo "PR_BRANCH=$(curl -H "Authorization: token ${GITHUB_TOKEN}" ${{ github.event.issue.pull_request.url }} | jq '.head.ref' | sed 's/\"//g')" >> $GITHUB_ENV
+          echo "PR_BRANCH=$(curl -H "Authorization: token ${GITHUB_TOKEN}" ${PULL_REQUEST_URL} | jq '.head.ref' | sed 's/\"//g')" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PULL_REQUEST_URL: ${{ github.event.issue.pull_request.url }}
 
       - name: Checkout (issue_comment)
         if: github.event_name == 'issue_comment'
@@ -49,19 +48,37 @@ jobs:
           ref: ${{ env.PR_BRANCH }}
           clean: false
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: ap-northeast-1
+
+      - name: Set environment (workflow_dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "PR_NUMBER=${PR_NUMBER}" >> $GITHUB_ENV
+          echo "SLACK_NOTIFY=${SLACK_NOTIFY}" >> $GITHUB_ENV
+        env:
+          PR_NUMBER: ${{ github.event.inputs.pull_request_number }}
+          SLACK_NOTIFY: ${{ github.event.inputs.slack_notify }}
+
       - name: Set environment (issue_comment)
         if: github.event_name == 'pull_request'
         run: |
           echo "PR_NUMBER=${PR_NUMBER}" >> $GITHUB_ENV
+          echo "SLACK_NOTIFY=${ISSUE_COMMENT}" >> $GITHUB_ENV
         env:
           PR_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_COMMENT: ${{ github.event.comment.body }}
 
       - name: echo inputs parameter
         run: |
           echo "BRANCH: ${BRANCH}"
           echo "PR_NUMBER: ${PR_NUMBER}"
           echo "SLACK_NOTIFY: ${SLACK_NOTIFY}"
-          echo "SHA: ${{ github.sha }}"
+          echo ${{ github.sha }}
         env:
           BRANCH: ${{ github.ref_name }}
           PR_NUMBER: ${{ env.PR_NUMBER }}
