@@ -22,7 +22,7 @@ jobs:
       (
         github.event_name == 'issue_comment' &&
         contains(github.event.comment.html_url, '/pull/') &&
-        startsWith(github.event.comment.body, '/deploy')
+        startsWith(github.event.comment.body, 'あああ環境')
       )
 
     steps:
@@ -61,10 +61,10 @@ jobs:
         if: github.event_name == 'issue_comment'
         run: |
           echo "PR_NUMBER=${PR_NUMBER}" >> $GITHUB_ENV
-          echo "SLACK_NOTIFY=${ISSUE_COMMENT}" >> $GITHUB_ENV
+          echo "SLACK_NOTIFY=${SLACK_NOTIFY}" >> $GITHUB_ENV
         env:
           PR_NUMBER: ${{ github.event.issue.number }}
-          ISSUE_COMMENT: ${{ github.event.comment.body }}
+          SLACK_NOTIFY: contains(github.event.comment.body, 'slack')
 
       - name: echo inputs parameter
         run: |
