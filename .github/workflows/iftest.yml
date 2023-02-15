@@ -51,18 +51,22 @@ jobs:
       - name: Set environment (workflow_dispatch)
         if: github.event_name == 'workflow_dispatch'
         run: |
+          echo "BRANCH=${BRANCH}" >> $GITHUB_ENV
           echo "PR_NUMBER=${PR_NUMBER}" >> $GITHUB_ENV
           echo "SLACK_NOTIFY=${SLACK_NOTIFY}" >> $GITHUB_ENV
         env:
+          BRANCH: ${{ github.ref_name }}
           PR_NUMBER: ${{ github.event.inputs.pull_request_number }}
           SLACK_NOTIFY: ${{ github.event.inputs.slack_notify }}
 
       - name: Set environment (issue_comment)
         if: github.event_name == 'issue_comment'
         run: |
+          echo "BRANCH=${BRANCH}" >> $GITHUB_ENV
           echo "PR_NUMBER=${PR_NUMBER}" >> $GITHUB_ENV
           echo "SLACK_NOTIFY=${SLACK_NOTIFY}" >> $GITHUB_ENV
         env:
+          BRANCH: ${{ env.PR_BRANCH }}
           PR_NUMBER: ${{ github.event.issue.number }}
           SLACK_NOTIFY: ${{ contains(github.event.comment.body, 'slack') }}
 
