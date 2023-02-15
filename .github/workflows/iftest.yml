@@ -16,7 +16,7 @@ on:
 jobs:
   create_review_env:
     name: Create Review Env
-    runs-on: [self-hosted, nextgen_payroll]
+    runs-on: ubuntu-latest
     if: |
       github.event_name != 'issue_comment' ||
       (
