@@ -64,7 +64,7 @@ jobs:
           echo "SLACK_NOTIFY=${SLACK_NOTIFY}" >> $GITHUB_ENV
         env:
           PR_NUMBER: ${{ github.event.issue.number }}
-          SLACK_NOTIFY: contains(github.event.comment.body, 'slack')
+          SLACK_NOTIFY: ${{ contains(github.event.comment.body, 'slack') }}
 
       - name: echo inputs parameter
         run: |
