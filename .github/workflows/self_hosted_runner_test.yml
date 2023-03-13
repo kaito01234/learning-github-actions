@@ -35,7 +35,7 @@ jobs:
                           name=ADDITIONAL_LABEL,value=${{ env.additional-label }},type=PLAINTEXT \
                       --query 'build.id' \
                       --output text)
-          echo "::set-output name=aws-build-id::$(echo $build_id)"
+          echo "aws-build-id=$(echo $build_id)" >> $GITHUB_ENV
         shell: bash
 
       - name: Wait AWS CodeBuild
@@ -43,7 +43,7 @@ jobs:
           retry_count=0
           while :; do
             build_parse=$(aws codebuild batch-get-builds \
-                            --ids ${{ steps.start-codebuild.outputs.aws-build-id }} \
+                            --ids ${{ env.aws-build-id }} \
                             --query 'builds[0].currentPhase' \
                             --output text)
             if [ "$build_parse" = "BUILD" ] || [ "$build_parse" = "PROVISIONING" ]; then
