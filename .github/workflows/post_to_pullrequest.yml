@@ -1,29 +1,17 @@
-name: Service1 CI
+name: Echo Parameter
 on:
   workflow_dispatch:
   pull_request:
     types: [assigned, opened, synchronize, reopened]
-    paths:
-      - "apps/service1/**"
-  issue_comment:
-    types: [created, edited]
-    
+
 jobs:
   deploy-actions-dummy:
-    # runs-on: [self-hosted, linux]
     runs-on: ubuntu-latest
     steps:
-      - run: echo "event - ${{ toJSON(inputs) }}"
+      - name: Echo Parameter
+      - run: echo "${{ toJSON(github) }}"
 
-      - run: echo "event - ${{ toJSON(github) }}"
-
-      - run: echo "sleep1します"
-      - run: sleep 5
-
-      - run: echo "sleep2します"
-      - run: sleep 5
-
-      - name: Post preview URL to Pull Request
+      - name: Post to Pull Request
         uses: actions/github-script@v3
         with:
           script: |

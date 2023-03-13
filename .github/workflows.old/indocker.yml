@@ -1,9 +1,0 @@
-name: Docker test
-on:
-  workflow_dispatch:
-  
-jobs:
-  Explore-GitHub-Actions:
-    runs-on: [self-hosted, linux]
-    steps:
-      - run: docker run centos:7.1.1503 echo "Hello Docker"

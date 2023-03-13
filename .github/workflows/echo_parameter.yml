@@ -1,0 +1,27 @@
+name: Echo Parameter
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [assigned, opened, synchronize, reopened]
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+  deploy-actions-dummy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo Parameter
+      - run: echo "${{ toJSON(github) }}"
+
+      - name: Echo Runner OS
+      - run: echo "${{ runner.os }}"
+
+      - name: sleep1
+        run: |
+          echo "sleepします"
+          sleep 5
+
+      - name: sleep2
+        run: |
+          echo "sleepします"
+          sleep 5
