@@ -26,7 +26,7 @@ jobs:
                       --project-name ${{ env.project-name }} \
                       --compute-type-override ${{ env.compute-type-override }} \
                       --environment-variables-override \
-                          name=REPOSITORY_NAME,value=https://github.com/${{ github.repository }},type=PLAINTEXT \
+                          name=REPO_URL,value=https://github.com/${{ github.repository }},type=PLAINTEXT \
                           name=ACCESS_TOKEN,value=$parsonal_access_token,type=PLAINTEXT \
                           name=LABELS,value=${{ github.run_id }},type=PLAINTEXT \
                       --query 'build.id' \
