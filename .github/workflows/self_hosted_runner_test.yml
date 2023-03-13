@@ -46,7 +46,7 @@ jobs:
                             --ids ${{ steps.start-codebuild.outputs.aws-build-id }} \
                             --query 'builds[0].currentPhase' \
                             --output text)
-            if [ "$build_parse" = "BUILD" ]; then
+            if [ "$build_parse" = "SUBMITTED" ]; then
               sleep 10 # Wait to connect runner
               break
             fi
@@ -76,13 +76,13 @@ jobs:
         run: |
           docker-compose build
 
-      - uses: actions/setup-node@v3
+      - name: Setup Nodejs and npm
+        uses: actions/setup-node@v3
         with:
-          node-version: '14.x'
+          node-version: 16
 
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '16.x'
+      - name: Setup yarn
+        run: npm install -g yarn
 
       - name: yarn install
         run: |
