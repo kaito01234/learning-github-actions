@@ -1,4 +1,4 @@
-name: Echo Parameter
+name: Post to Pull Request
 on:
   workflow_dispatch:
   pull_request:
