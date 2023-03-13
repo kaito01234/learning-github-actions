@@ -3,7 +3,6 @@ on:
   workflow_dispatch:
 
 env:
-  personal-access-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
   project-name: ci-new-build-test
   compute-type-override: BUILD_GENERAL1_SMALL
   additional-label: my-runner
@@ -24,7 +23,7 @@ jobs:
         env:
           api_endpoint: https://api.github.com/repos/${{ github.repository }}/actions/runners/registration-token
         run: |
-          runner_token=$(curl -sX POST -H "Authorization: token ${{ env.personal-access-token }}" $api_endpoint | jq -r '.token')
+          runner_token=$(curl -sX POST -H "Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN }}" $api_endpoint | jq -r '.token')
           build_id=$(aws codebuild start-build \
                       --project-name ${{ env.project-name }} \
                       --compute-type-override ${{ env.compute-type-override }} \
