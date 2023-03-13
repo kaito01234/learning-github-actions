@@ -46,8 +46,8 @@ jobs:
                             --ids ${{ steps.start-codebuild.outputs.aws-build-id }} \
                             --query 'builds[0].currentPhase' \
                             --output text)
-            if [ "$build_parse" = "SUBMITTED" ]; then
-              sleep 10 # Wait to connect runner
+            if [ "$build_parse" = "BUILD" ] || [ "$build_parse" = "PROVISIONING" ]; then
+              sleep 5 # Wait to connect runner
               break
             fi
             if [ $retry_count = 24 ]; then # timeout 2min
