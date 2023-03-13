@@ -1,15 +1,16 @@
-name: Self Hosted Test
+name: Self Hosted Runner Test
 on:
   workflow_dispatch:
-  pull_request:
-    types: [assigned, opened, synchronize, reopened]
 
 jobs:
-  deploy-actions-dummy:
+  self-hosted-runner-test:
     runs-on: [self-hosted, my-runner]
     steps:
-      - name: Echo Parameter
+      - name: Echo GitHub Parameter
       - run: echo "${{ toJSON(github) }}"
+
+      - name: Echo Runner OS
+      - run: echo "${{ runner.os }}"
 
       - name: Checkout
         uses: actions/checkout@v3

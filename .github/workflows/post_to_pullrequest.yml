@@ -5,10 +5,10 @@ on:
     types: [assigned, opened, synchronize, reopened]
 
 jobs:
-  deploy-actions-dummy:
+  post-to-pull-request:
     runs-on: ubuntu-latest
     steps:
-      - name: Echo Parameter
+      - name: Echo GitHub Parameter
       - run: echo "${{ toJSON(github) }}"
 
       - name: Post to Pull Request

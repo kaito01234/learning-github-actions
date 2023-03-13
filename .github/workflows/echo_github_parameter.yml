@@ -1,4 +1,4 @@
-name: Echo Parameter
+name: Echo GitHub Parameter
 on:
   workflow_dispatch:
   pull_request:
@@ -7,10 +7,10 @@ on:
     types: [created, edited]
 
 jobs:
-  deploy-actions-dummy:
+  echo-github-parameter:
     runs-on: ubuntu-latest
     steps:
-      - name: Echo Parameter
+      - name: Echo GitHub Parameter
       - run: echo "${{ toJSON(github) }}"
 
       - name: Echo Runner OS
