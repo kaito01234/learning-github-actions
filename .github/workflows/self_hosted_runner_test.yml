@@ -79,4 +79,4 @@ jobs:
       - name: yarn install
         run: |
           yarn install
-        working-directory: apps/services1
+        working-directory: apps/service1
