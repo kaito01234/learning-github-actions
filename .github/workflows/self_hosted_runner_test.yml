@@ -3,7 +3,24 @@ on:
   workflow_dispatch:
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-1
+      - name: Setup Self-hosted Runner
+        uses: ./.github/self_hosted_runner
+        with:
+          personal-access-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          project-name: ci-new-build-test
+          additional-label: my-runner
+
   self-hosted-runner-test:
+    needs: setup
     runs-on: [self-hosted, my-runner]
     steps:
       - name: Echo GitHub Parameter
@@ -18,3 +35,8 @@ jobs:
       - name: build
         run: |
           docker-compose build
+
+      - name: yarn install
+        run: |
+          yarn install
+        working-directory: apps/services1
