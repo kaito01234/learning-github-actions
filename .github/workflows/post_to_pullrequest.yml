@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Echo GitHub Parameter
-      - run: echo "${{ toJSON(github) }}"
+        run: echo "${{ toJSON(github) }}"
 
       - name: Post to Pull Request
         uses: actions/github-script@v3

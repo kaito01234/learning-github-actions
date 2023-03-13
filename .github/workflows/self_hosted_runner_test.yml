@@ -7,10 +7,10 @@ jobs:
     runs-on: [self-hosted, my-runner]
     steps:
       - name: Echo GitHub Parameter
-      - run: echo "${{ toJSON(github) }}"
+        run: echo "${{ toJSON(github) }}"
 
       - name: Echo Runner OS
-      - run: echo "${{ runner.os }}"
+        run: echo "${{ runner.os }}"
 
       - name: Checkout
         uses: actions/checkout@v3
