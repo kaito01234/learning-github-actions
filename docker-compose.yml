@@ -1,0 +1,7 @@
+version: '2.3'
+services:
+  service1:
+    build:
+      context: ./apps/service1
+      dockerfile: ./Dockerfile
+    image: service1
