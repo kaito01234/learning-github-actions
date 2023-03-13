@@ -5,7 +5,6 @@ on:
 env:
   project-name: ci-new-build-test
   compute-type-override: BUILD_GENERAL1_SMALL
-  additional-label: my-runner
 
 jobs:
   setup:
@@ -31,7 +30,7 @@ jobs:
                           name=REPOSITORY_NAME,value=${{ github.repository }},type=PLAINTEXT \
                           name=RUNNER_TOKEN,value=$runner_token,type=PLAINTEXT \
                           name=GITHUB_RUN_ID,value=${{ github.run_id }},type=PLAINTEXT \
-                          name=ADDITIONAL_LABEL,value=${{ env.additional-label }},type=PLAINTEXT \
+                          name=ADDITIONAL_LABEL,value=${{ github.run_id }},type=PLAINTEXT \
                       --query 'build.id' \
                       --output text)
           echo "aws-build-id=$(echo $build_id)" >> $GITHUB_ENV
@@ -60,7 +59,7 @@ jobs:
 
   self-hosted-runner-test:
     needs: setup
-    runs-on: [self-hosted, my-runner]
+    runs-on: [self-hosted, ${{ github.run_id }}]
     steps:
       - name: Echo GitHub Parameter
         run: echo "${{ toJSON(github) }}"
