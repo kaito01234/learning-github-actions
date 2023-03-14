@@ -9,6 +9,11 @@ env:
 jobs:
   setup:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        servicename: [job1, job2]
+
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -18,9 +23,9 @@ jobs:
           aws-region: ap-northeast-1
 
       - name: Start AWS CodeBuild
-        id: start-codebuild
         env:
           parsonal_access_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          labels: '${{ matrix.servicename }},${{ github.run_id }}'
         run: |
           build_id=$(aws codebuild start-build \
                       --project-name ${{ env.project-name }} \
@@ -28,7 +33,7 @@ jobs:
                       --environment-variables-override \
                           name=REPO_URL,value=https://github.com/${{ github.repository }},type=PLAINTEXT \
                           name=ACCESS_TOKEN,value=$parsonal_access_token,type=PLAINTEXT \
-                          name=LABELS,value=${{ github.run_id }},type=PLAINTEXT \
+                          name=LABELS,value=$labels,type=PLAINTEXT \
                       --query 'build.id' \
                       --output text)
           echo "aws-build-id=$(echo $build_id)" >> $GITHUB_ENV
@@ -55,9 +60,9 @@ jobs:
           done
         shell: bash
 
-  self-hosted-runner-test:
+  self-hosted-runner-build:
     needs: setup
-    runs-on: [self-hosted, "${{ github.run_id }}"]
+    runs-on: [self-hosted, "${{ github.run_id }}", job1]
     steps:
       - name: Echo GitHub Parameter
         run: echo "${{ toJSON(github) }}"
@@ -71,6 +76,19 @@ jobs:
       - name: build
         run: |
           docker-compose build
+
+  self-hosted-runner-yarn:
+    needs: setup
+    runs-on: [self-hosted, "${{ github.run_id }}", job2]
+    steps:
+      - name: Echo GitHub Parameter
+        run: echo "${{ toJSON(github) }}"
+
+      - name: Echo Runner OS
+        run: echo "${{ runner.os }}"
+
+      - name: Checkout
+        uses: actions/checkout@v3
 
       - name: Setup Nodejs and npm
         uses: actions/setup-node@v3
