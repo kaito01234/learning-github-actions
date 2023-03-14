@@ -25,7 +25,7 @@ jobs:
       - name: Start AWS CodeBuild
         env:
           parsonal_access_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          labels: '${{ matrix.servicename }},${{ github.run_id }}'
+          labels: "${{ matrix.servicename }},${{ github.run_id }}"
         run: |
           build_id=$(aws codebuild start-build \
                       --project-name ${{ env.project-name }} \
