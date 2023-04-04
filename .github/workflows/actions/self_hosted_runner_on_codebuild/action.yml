@@ -1,0 +1,60 @@
+name: Setup Self-hosted Runner on AWS CodeBuild
+description: Setup Self-hosted Runner running on AWS CodeBuild
+
+inputs:
+  additional-label:
+    description: Self-hosted Runner additional label
+    required: true
+
+  codebuild-project-name:
+    description: AWS CodeBuild Project Name
+    required: false
+    default: GitHubSelfHostedRunner
+
+  codebuild-compute-type:
+    description: AWS CodeBuild Compute Type, Defaults to BUILD_GENERAL1_SMALL
+    required: false
+    default: BUILD_GENERAL1_SMALL
+
+outputs:
+  aws-build-id:
+    description: AWS CodeBuild Build ID
+    value: ${{ env.aws-build-id }}
+
+runs:
+  using: 'Composite'
+  steps:
+    - name: Start AWS CodeBuild
+      run: |
+        build_id=$(aws codebuild start-build \
+              --project-name ${{ inputs.codebuild-project-name }} \
+              --compute-type-override ${{ inputs.codebuild-compute-type }} \
+              --environment-variables-override \
+                  name=REPO_URL,value=https://github.com/${{ github.repository }},type=PLAINTEXT \
+                  name=LABELS,value=\"${{ inputs.additional-label }}\",type=PLAINTEXT \
+                  name=EPHEMERAL,value=\"1\",type=PLAINTEXT \
+              --query 'build.id' \
+              --output text)
+        echo "aws-build-id=$(echo $build_id)" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Wait AWS CodeBuild
+      run: |
+        retry_count=0
+        while :; do
+          build_parse=$(aws codebuild batch-get-builds \
+              --ids ${{ env.aws-build-id }} \
+              --query 'builds[0].currentPhase' \
+              --output text)
+          if [ "$build_parse" = "BUILD" ] || [ "$build_parse" = "PROVISIONING" ]; then
+            sleep 5 # Wait to connect runner
+            break
+          fi
+          if [ $retry_count = 24 ]; then # timeout 2min
+            echo "Timeout wait AWS CodeBuild"
+            exit 1
+          fi
+          retry_count=$((retry_count+1))
+          sleep 5
+        done
+      shell: bash

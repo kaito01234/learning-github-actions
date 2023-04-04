@@ -8,57 +8,32 @@ env:
 
 jobs:
   setup:
-    runs-on: ubuntu-latest
+    setup:
+      name: Setup Self hosted runner on CodeBuild
+      runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        servicename: [job1, job2]
+      strategy:
+        matrix:
+          jobname: [job1, job2]
 
-    steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-          aws-region: ap-northeast-1
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+          with:
+            clean: false
 
-      - name: Start AWS CodeBuild
-        env:
-          parsonal_access_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          labels: ${{ matrix.servicename }},${{ github.run_id }}
-        run: |
-          build_id=$(aws codebuild start-build \
-                      --project-name ${{ env.project-name }} \
-                      --compute-type-override ${{ env.compute-type-override }} \
-                      --environment-variables-override \
-                          name=REPO_URL,value=https://github.com/${{ github.repository }},type=PLAINTEXT \
-                          name=ACCESS_TOKEN,value=$parsonal_access_token,type=PLAINTEXT \
-                          name=LABELS,value=\"$labels\",type=PLAINTEXT \
-                      --query 'build.id' \
-                      --output text)
-          echo "aws-build-id=$(echo $build_id)" >> $GITHUB_ENV
-        shell: bash
+        - name: Configure AWS credentials
+          uses: aws-actions/configure-aws-credentials@v2
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+            aws-region: ap-northeast-1
 
-      - name: Wait AWS CodeBuild
-        run: |
-          retry_count=0
-          while :; do
-            build_parse=$(aws codebuild batch-get-builds \
-                            --ids ${{ env.aws-build-id }} \
-                            --query 'builds[0].currentPhase' \
-                            --output text)
-            if [ "$build_parse" = "BUILD" ] || [ "$build_parse" = "PROVISIONING" ]; then
-              sleep 5 # Wait to connect runner
-              break
-            fi
-            if [ $retry_count = 24 ]; then # timeout 2min
-              echo "Timeout wait AWS CodeBuild"
-              exit 1
-            fi
-            retry_count=$((retry_count+1))
-            sleep 5
-          done
-        shell: bash
+        - name: Setup Self-hosted Runner on AWS CodeBuild
+          id: setup
+          uses: ./.github/actions/self_hosted_runner_on_codebuild
+          with:
+            additional-label: ${{ github.run_id }},${{ matrix.jobname }}
 
   self-hosted-runner-build:
     needs: setup
