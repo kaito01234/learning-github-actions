@@ -1,0 +1,23 @@
+name: Echo GitHub Parameter on CODEBUILD
+on:
+  workflow_dispatch:
+
+jobs:
+  echo-github-parameter:
+    runs-on: [self-hosted, "${{ github.run_id }}", "runs-on=CODEBUILD"]
+    steps:
+      - name: Echo GitHub Parameter
+        run: echo "${{ toJSON(github) }}"
+
+      - name: Echo Runner OS
+        run: echo "${{ runner.os }}"
+
+      - name: sleep1
+        run: |
+          echo "sleepします"
+          sleep 5
+
+      - name: sleep2
+        run: |
+          echo "sleepします"
+          sleep 5

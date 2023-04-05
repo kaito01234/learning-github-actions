@@ -1,10 +1,10 @@
-name: Echo GitHub Parameter on Self Hosted
+name: Echo GitHub Parameter on FARGATE_SPOT
 on:
   workflow_dispatch:
 
 jobs:
   echo-github-parameter:
-    runs-on: [self-hosted, "${{ github.run_id }}", "runs-on=CODEBUILD"]
+    runs-on: [self-hosted, "${{ github.run_id }}", "runs-on=FARGATE_SPOT"]
     steps:
       - name: Echo GitHub Parameter
         run: echo "${{ toJSON(github) }}"
