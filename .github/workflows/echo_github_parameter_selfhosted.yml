@@ -1,10 +1,10 @@
-name: Echo GitHub Parameter
+name: Echo GitHub Parameter on Self Hosted
 on:
   workflow_dispatch:
 
 jobs:
   echo-github-parameter:
-    runs-on: [self-hosted, initiator]
+    runs-on: [self-hosted, "${{ github.run_id }}", "runs-on=CODEBUILD"]
     steps:
       - name: Echo GitHub Parameter
         run: echo "${{ toJSON(github) }}"
