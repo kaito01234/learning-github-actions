@@ -21,3 +21,41 @@ jobs:
         run: |
           echo "sleepします"
           sleep 5
+
+  echo-github-parameter2:
+    runs-on: [self-hosted, "${{ github.run_id }}", "runs-on=FARGATE_SPOT", "type=MEDIUM"]
+    steps:
+      - name: Echo GitHub Parameter
+        run: echo "${{ toJSON(github) }}"
+
+      - name: Echo Runner OS
+        run: echo "${{ runner.os }}"
+
+      - name: sleep1
+        run: |
+          echo "sleepします"
+          sleep 5
+
+      - name: sleep2
+        run: |
+          echo "sleepします"
+          sleep 5
+
+  echo-github-parameter3:
+    runs-on: [self-hosted, "${{ github.run_id }}", "runs-on=FARGATE_SPOT", "type=LARGE"]
+    steps:
+      - name: Echo GitHub Parameter
+        run: echo "${{ toJSON(github) }}"
+
+      - name: Echo Runner OS
+        run: echo "${{ runner.os }}"
+
+      - name: sleep1
+        run: |
+          echo "sleepします"
+          sleep 5
+
+      - name: sleep2
+        run: |
+          echo "sleepします"
+          sleep 5
