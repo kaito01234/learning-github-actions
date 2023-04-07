@@ -13,7 +13,7 @@ jobs:
         run: echo "${{ runner.os }}"
 
       - name: Echo env
-        run: echo "${{ $ACCESS_TOKEN }}"
+        run: echo "${{ ACCESS_TOKEN }}"
 
       - name: sleep1
         run: |
