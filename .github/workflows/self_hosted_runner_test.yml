@@ -2,65 +2,11 @@ name: Self Hosted Runner Test
 on:
   workflow_dispatch:
 
-env:
-  project-name: ci-new-build-test
-  compute-type-override: BUILD_GENERAL1_SMALL
-
 jobs:
-  setup:
-    name: Setup Self hosted runner on CodeBuild
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        jobname: [job1, job2]
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          clean: false
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-          aws-region: ap-northeast-1
-
-      - name: Setup Self-hosted Runner on AWS CodeBuild
-        id: setup
-        uses: ./.github/actions/self_hosted_runner_on_codebuild
-        with:
-          additional-label: ${{ github.run_id }},${{ matrix.jobname }}
-
   self-hosted-runner-build:
     needs: setup
-    runs-on: [self-hosted, "${{ github.run_id }}", job1]
+    runs-on: [self-hosted]
     steps:
-      - name: Echo GitHub Parameter
-        run: echo "${{ toJSON(github) }}"
-
-      - name: Echo Runner OS
-        run: echo "${{ runner.os }}"
-
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: build
-        run: |
-          docker-compose build
-
-  self-hosted-runner-yarn:
-    needs: setup
-    runs-on: [self-hosted, "${{ github.run_id }}", job2]
-    steps:
-      - name: Echo GitHub Parameter
-        run: echo "${{ toJSON(github) }}"
-
-      - name: Echo Runner OS
-        run: echo "${{ runner.os }}"
-
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -76,3 +22,7 @@ jobs:
         run: |
           yarn install
         working-directory: apps/service1
+
+      - name: build
+        run: |
+          docker-compose build

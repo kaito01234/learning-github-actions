@@ -6,7 +6,7 @@ services:
       dockerfile: ./Dockerfile
     image: service1
 
-  worker:
+  github-runner:
     image: myoung34/github-runner:latest
     environment:
       REPO_URL: https://github.com/kaito01234/pipeline-test
@@ -21,3 +21,14 @@ services:
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock'
       # - '/tmp/runner:/tmp/runner'
+
+  self-hosted-runner:
+    build:
+      dockerfile: ./Dockerfile
+    image: self-hosted-runner
+    environment:
+      GITHUB_ACCESS_TOKEN: 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
+      GITHUB_REPOSITORY_OWNER: kaito01234
+      GITHUB_REPOSITORY_NAME: pipeline-test
+      GITHUB_DOMAIN: github.com
+      GITHUB_API_DOMAIN: api.github.com
