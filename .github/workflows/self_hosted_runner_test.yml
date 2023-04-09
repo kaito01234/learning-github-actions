@@ -4,7 +4,6 @@ on:
 
 jobs:
   self-hosted-runner-build:
-    needs: setup
     runs-on: [self-hosted]
     steps:
       - name: Checkout
