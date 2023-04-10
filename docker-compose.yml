@@ -12,7 +12,7 @@ services:
       REPO_URL: https://github.com/kaito01234/pipeline-test
       # RUNNER_WORKDIR: /tmp/runner/work
       LABELS: initiator
-      # APP_ID: 313140
+      # APP_ID: 
       # APP_PRIVATE_KEY:
       # ACCESS_TOKEN:
     security_opt:
@@ -27,7 +27,7 @@ services:
       dockerfile: ./Dockerfile
     image: self-hosted-runner
     environment:
-      GITHUB_ACCESS_TOKEN: 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
+      GITHUB_ACCESS_TOKEN: 
       GITHUB_REPOSITORY_OWNER: kaito01234
       GITHUB_REPOSITORY_NAME: pipeline-test
       GITHUB_DOMAIN: github.com
