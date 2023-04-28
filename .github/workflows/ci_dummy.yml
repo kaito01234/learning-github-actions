@@ -1,0 +1,24 @@
+name: service3
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+jobs:
+  npm_test:
+    name: npm test
+    runs-on: ubuntu-latest
+    if: ${{ false }}
+
+    steps:
+      - name: Pass
+        run: echo ok
+
+  docker_build:
+    name: docker build
+    runs-on: ubuntu-latest
+    if: ${{ false }}
+
+    steps:
+      - name: Pass
+        run: echo ok
