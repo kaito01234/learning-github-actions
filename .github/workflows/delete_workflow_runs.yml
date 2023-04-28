@@ -9,7 +9,7 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            const workflow_runs = github.rest.actions.listWorkflowRuns({
+            const workflow_runs = github.rest.actions.listWorkflowRunsForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
               per_page: 100
