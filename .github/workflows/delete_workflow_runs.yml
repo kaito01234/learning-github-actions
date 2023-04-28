@@ -9,17 +9,17 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            github.rest.issues.createComment({
+            const list = github.rest.issues.listWorkflowRuns({
               owner: context.repo.owner,
               repo: context.repo.repo,
               per_page: 100
-            }).then(({ data }) => {
-              data.workflow_runs.forEach(workflow_run => {
-                octokit.rest.actions.deleteWorkflowRun({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  run_id: workflow_run.id
-                });
+            });
+
+            list.forEach(workflow_run => {
+              octokit.rest.actions.deleteWorkflowRun({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: workflow_run.id
               });
             });
         env:
