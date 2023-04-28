@@ -13,14 +13,14 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               per_page: 100
-            })
-
-            for (const workflow_run of workflow_runs) {
-              octokit.rest.actions.deleteWorkflowRun({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                run_id: workflow_run.id
-              })
-            }
+            }).then(({ data }) => {
+              data.workflow_runs.value.forEach(workflow_run => {
+                octokit.rest.actions.deleteWorkflowRun({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  run_id: workflow_run.id
+                });
+              });
+            });
         env:
           GITHUB_TOKEN: ${{ secrets.MY_ACCESS_TOKEN  }}
