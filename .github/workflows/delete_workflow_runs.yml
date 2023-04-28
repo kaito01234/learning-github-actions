@@ -8,6 +8,7 @@ jobs:
     steps:
       - uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.MY_ACCESS_TOKEN }}
           script: |
             github.rest.actions.listWorkflowRunsForRepo({
               owner: context.repo.owner,
@@ -22,5 +23,3 @@ jobs:
                 });
               });
             });
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_ACCESS_TOKEN }}
