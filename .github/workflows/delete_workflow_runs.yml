@@ -1,0 +1,27 @@
+name: Delete Workflow Runs
+on:
+  workflow_dispatch:
+
+jobs:
+  delete-workflow-runs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+            octokit.actions.listWorkflowRuns({
+              owner: '<owner>',
+              repo: '<repo>',
+              per_page: 100
+            }).then(({ data }) => {
+              data.workflow_runs.forEach(workflow_run => {
+                octokit.actions.deleteWorkflowRun({
+                  owner: '<owner>',
+                  repo: '<repo>',
+                  run_id: workflow_run.id
+                });
+              });
+            });
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_ACCESS_TOKEN  }}
