@@ -9,12 +9,12 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            const workflow_runs = github.rest.actions.listWorkflowRunsForRepo({
+            github.rest.actions.listWorkflowRunsForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
               per_page: 100
             }).then(({ data }) => {
-              data.workflow_runs.value.forEach(workflow_run => {
+              data.workflow_runs.forEach(workflow_run => {
                 octokit.rest.actions.deleteWorkflowRun({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
@@ -23,4 +23,4 @@ jobs:
               });
             });
         env:
-          GITHUB_TOKEN: ${{ secrets.MY_ACCESS_TOKEN  }}
+          GITHUB_TOKEN: ${{ secrets.MY_ACCESS_TOKEN }}
