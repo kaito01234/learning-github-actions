@@ -1,0 +1,84 @@
+name: Setup Self-hosted Runner on AWS Fargate
+description: Setup Self-hosted Runner running on AWS Fargate
+
+inputs:
+  additional-label:
+    description: Self-hosted Runner additional label
+    required: true
+
+  fargate-cluster-name:
+    description: AWS Fargate Cluster name
+    required: false
+    default: GitHubSelfHostedRunner
+
+  fargate-task-definition:
+    description: AWS Fargate TaskDef name
+    required: false
+    default: GitHubSelfHostedRunner
+
+  fargate-subnets:
+    description: AWS Fargate Subnets
+    required: false
+    default: subnet-XXXXXXXXXXXXXXXXX,subnet-XXXXXXXXXXXXXXXXX,subnet-XXXXXXXXXXXXXXXXX
+
+  fargate-security-group:
+    description: AWS Fargate Security Group
+    required: false
+    default: sg-XXXXXXXXXXXXXXXXX
+
+  fargate-cpu:
+    description: AWS Fargate CPU
+    required: false
+    default: 1024
+
+  fargate-memory:
+    description: AWS Fargate Memory
+    required: false
+    default: 4096
+
+outputs:
+  aws-task-arn:
+    description: AWS Fargate Task ARN
+    value: ${{ env.aws-task-arn }}
+
+runs:
+  using: 'Composite'
+  steps:
+    - name: Start AWS Fargate
+      env:
+        cpu: ${{ inputs.fargate-cpu }}
+        memory: ${{ inputs.fargate-memory }}
+      run: |
+        task_arn=$(aws ecs run-task \
+              --cluster ${{ inputs.fargate-cluster-name }} \
+              --capacity-provider-strategy capacityProvider=FARGATE_SPOT,weight=1 \
+              --task-definition ${{ inputs.fargate-task-definition }} \
+              --network-configuration "awsvpcConfiguration={subnets=[${{ inputs.fargate-subnets }}],securityGroups=[${{ inputs.fargate-security-group }}],assignPublicIp=DISABLED}" \
+              --capacity-provider-strategy capacityProvider=FARGATE_SPOT,weight=1 \
+              --overrides "{\"cpu\":\"$cpu\",\"memory\":\"$memory\",\"containerOverrides\":[{\"name\":\"WebContainer\",\"environment\":[{\"name\":\"REPO_URL\",\"value\":\"https://github.com/${{ github.repository }}\"},{\"name\":\"LABELS\",\"value\":\"${{ inputs.additional-label }}\"},{\"name\":\"EPHEMERAL\",\"value\":\"1\"}]}]}" \
+              --query 'tasks[0].taskArn' \
+              --output text)
+        echo "aws-task-arn=$(echo $task_arn)" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Wait AWS Fargate
+      run: |
+        retry_count=0
+        while :; do
+          last_status=$(aws ecs describe-tasks \
+              --cluster ${{ inputs.fargate-cluster-name }} \
+              --query 'tasks[0].lastStatus' \
+              --tasks ${{ env.aws-task-arn }} \
+              --output text)
+          if [ "$last_status" = "RUNNING" ] || [ "$last_status" = "PENDING" ]; then
+            sleep 5 # Wait to connect runner
+            break
+          fi
+          if [ $retry_count = 24 ]; then # timeout 2min
+            echo "Timeout wait AWS Fargate"
+            exit 1
+          fi
+          retry_count=$((retry_count+1))
+          sleep 5
+        done
+      shell: bash

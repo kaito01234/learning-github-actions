@@ -23,6 +23,6 @@ jobs:
                 '- aaaaaaaaaaa\n' +
                 '    - https://www.google.com\n' +
                 '\n' +
-                'パスワードはこちら👇\n' +
+                '👇\n' +
                 'https://www.google.com'
             })

@@ -1,0 +1,94 @@
+name: Self Hosted Runner (Setup Action)
+on:
+  workflow_dispatch:
+
+jobs:
+  setup_fargate:
+    name: Setup Self hosted runner on Fargate
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    if: ${{ github.event.pull_request.draft == false }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          clean: false
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: ap-northeast-1
+
+      - name: Setup Self-hosted Runner on AWS Fargate
+        id: setup
+        uses: ./.github/actions/self_hosted_runner_on_fargate
+        with:
+          additional-label: ${{ github.run_id }},${{ github.job }}
+          fargate-cpu: 2048
+          fargate-memory: 8192
+
+  setup_codebuild:
+    name: Setup Self hosted runner on CodeBuild
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    if: ${{ github.event.pull_request.draft == false }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          clean: false
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: ap-northeast-1
+
+      - name: Setup Self-hosted Runner on AWS CodeBuild
+        id: setup
+        uses: ./.github/actions/self_hosted_runner_on_codebuild
+        with:
+          additional-label: ${{ github.run_id }},${{ github.job }}
+
+  yarn_test:
+    needs: setup_fargate
+    name: Yarn test
+    timeout-minutes: 60
+    runs-on: [self-hosted, "${{ github.run_id }}", setup_fargate]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Nodejs and npm
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Setup yarn
+        run: npm install -g yarn
+
+      - name: yarn install
+        run: yarn install --frozen-lockfile
+        working-directory: apps/service1
+
+  docker_build:
+    needs: setup_codebuild
+    name: Docker build
+    timeout-minutes: 60
+    runs-on: [self-hosted, "${{ github.run_id }}", setup_codebuild]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Docker Build
+        run: docker-compose build
+        env:
+          DOCKER_BUILDKIT: 1
+          COMPOSE_DOCKER_CLI_BUILD: 1

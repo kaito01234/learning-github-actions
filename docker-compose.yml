@@ -6,29 +6,14 @@ services:
       dockerfile: ./Dockerfile
     image: service1
 
-  github-runner:
-    image: myoung34/github-runner:latest
-    environment:
-      REPO_URL: https://github.com/kaito01234/pipeline-test
-      # RUNNER_WORKDIR: /tmp/runner/work
-      LABELS: initiator
-      # APP_ID: 
-      # APP_PRIVATE_KEY:
-      # ACCESS_TOKEN:
-    security_opt:
-      # needed on SELinux systems to allow docker container to manage other docker containers
-      - label:disable
-    volumes:
-      - '/var/run/docker.sock:/var/run/docker.sock'
-      # - '/tmp/runner:/tmp/runner'
-
-  self-hosted-runner:
+  service2:
     build:
+      context: ./apps/service2
       dockerfile: ./Dockerfile
-    image: self-hosted-runner
-    environment:
-      GITHUB_ACCESS_TOKEN: 
-      GITHUB_REPOSITORY_OWNER: kaito01234
-      GITHUB_REPOSITORY_NAME: pipeline-test
-      GITHUB_DOMAIN: github.com
-      GITHUB_API_DOMAIN: api.github.com
+    image: service2
+
+  service3:
+    build:
+      context: ./apps/service3
+      dockerfile: ./Dockerfile
+    image: service3
