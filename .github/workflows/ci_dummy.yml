@@ -1,4 +1,4 @@
-name: service3
+name: skip test
 on:
   workflow_dispatch:
   pull_request:
