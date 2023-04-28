@@ -11,7 +11,7 @@ env:
 
 jobs:
   npm_test:
-    name: Yarn test
+    name: npm test
     runs-on: ubuntu-latest
 
     steps:

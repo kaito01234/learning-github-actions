@@ -55,9 +55,9 @@ jobs:
         with:
           additional-label: ${{ github.run_id }},${{ github.job }}
 
-  yarn_test:
+  npm_test:
     needs: setup_fargate
-    name: Yarn test
+    name: npm test
     timeout-minutes: 60
     runs-on: [self-hosted, "${{ github.run_id }}", setup_fargate]
 
@@ -68,13 +68,10 @@ jobs:
       - name: Setup Nodejs and npm
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
 
-      - name: Setup yarn
-        run: npm install -g yarn
-
-      - name: yarn install
-        run: yarn install --frozen-lockfile
+      - name: npm install
+        run: npm ci
         working-directory: apps/service1
 
   docker_build:
