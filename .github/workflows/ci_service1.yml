@@ -32,7 +32,7 @@ jobs:
         working-directory: apps/${{ env.SERVICE_NAME }}
 
   docker_build:
-    name: docker build service3
+    name: docker build service1
     runs-on: ubuntu-latest
 
     steps:
