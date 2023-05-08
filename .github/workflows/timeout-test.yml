@@ -1,0 +1,12 @@
+name: Timeoute test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  wait:
+    timeout-minutes: 2
+    runs-on: ubuntu-latest
+
+    steps:
+    - run: sleep 600
