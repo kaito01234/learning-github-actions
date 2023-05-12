@@ -18,5 +18,10 @@ jobs:
           BASE_BRANCH=git show-branch | grep '*' | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -1 | awk -F'[]~^[]' '{print $2}'
           echo "BASE_BRANCH=${BASE_BRANCH}" >> $GITHUB_ENV
 
+      - name: echo
+        run: |
+          echo ${GITHUB_BASE_REF}
+          echo ${DEST_DIR}
+
       - name: Check base branch
-        run: GITHUB_BASE_REF === ${{ env.DEST_DIR }}}
+        run: ${GITHUB_BASE_REF} === ${DEST_DIR}
