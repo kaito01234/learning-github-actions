@@ -1,0 +1,23 @@
+name: test
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, reopened, edited, synchronize, ready_for_review]
+
+jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    if: ${{ false }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Get base branch
+        run: |
+          BASE_BRANCH=git show-branch | grep '*' | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -1 | awk -F'[]~^[]' '{print $2}'
+          echo "BASE_BRANCH=${BASE_BRANCH}" >> $GITHUB_ENV
+
+      - name: check
+        run: GITHUB_BASE_REF === ${{ env.DEST_DIR }}}
