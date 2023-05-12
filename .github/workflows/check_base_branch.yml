@@ -21,7 +21,7 @@ jobs:
       - name: echo
         run: |
           echo ${GITHUB_BASE_REF}
-          echo ${DEST_DIR}
+          echo ${BASE_BRANCH}
 
       - name: Check base branch
-        run: ${GITHUB_BASE_REF} === ${DEST_DIR}
+        run: ${GITHUB_BASE_REF} === ${BASE_BRANCH}
