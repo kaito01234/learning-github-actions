@@ -13,6 +13,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - run: git show-branch
+
       - name: Get base branch
         run: |
           BASE_BRANCH=$(git show-branch | grep '*' | grep -v '$(git rev-parse --abbrev-ref HEAD)' | head -1 | awk -F'[]~^[]' '{print $2}')
