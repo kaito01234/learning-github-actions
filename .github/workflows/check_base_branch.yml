@@ -15,7 +15,7 @@ jobs:
 
       - name: Get base branch
         run: |
-          BASE_BRANCH=git show-branch | grep '*' | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -1 | awk -F'[]~^[]' '{print $2}'
+          BASE_BRANCH=$(git show-branch | grep '*' | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -1 | awk -F'[]~^[]' '{print $2}')
           echo "BASE_BRANCH=${BASE_BRANCH}" >> $GITHUB_ENV
 
       - name: echo
