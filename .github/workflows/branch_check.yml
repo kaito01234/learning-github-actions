@@ -2,7 +2,7 @@ name: Check branch consistency
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, reopened, edited, synchronize, ready_for_review]
 
 jobs:
   check:
@@ -23,6 +23,9 @@ jobs:
 
         HEAD_SHA=$(git rev-parse $PR_HEAD_REF)
         BASE_SHA=$(git rev-parse $PR_BASE_REF)
+
+        echo "Base branch of SHA: $BASE_SHA"
+        echo "Head branch of SHA: $HEAD_SHA"
 
         COMMON_ANCESTOR_SHA=$(git merge-base $HEAD_SHA $BASE_SHA)
 
