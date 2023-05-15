@@ -1,0 +1,37 @@
+name: Check branch consistency
+
+on:
+  pull_request:
+    types: [opened, reopened, edited, synchronize, ready_for_review]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout head
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Check branches
+      run: |
+        PR_BASE_REF=${{ github.base_ref }}
+        PR_HEAD_REF=${{ github.head_ref }}
+
+        echo "Base branch of PR: $PR_BASE_REF"
+        echo "Head branch of PR: $PR_HEAD_REF"
+
+        HEAD_SHA=${{ github.event.pull_request.head.sha }}
+        BASE_SHA=${{ github.event.pull_request.base.sha }}
+
+        echo "Base branch of SHA: $BASE_SHA"
+        echo "Head branch of SHA: $HEAD_SHA"
+
+        COMMON_ANCESTOR_SHA=$(git merge-base $HEAD_SHA $BASE_SHA)
+
+        if [[ "$COMMON_ANCESTOR_SHA" == "$BASE_SHA" ]]; then
+          echo "The base branch of the PR is the branch from which the head branch was created."
+        else
+          echo "The base branch of the PR is not the branch from which the head branch was created."
+          exit 1
+        fi
