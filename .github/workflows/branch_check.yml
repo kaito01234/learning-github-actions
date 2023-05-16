@@ -48,6 +48,6 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `:warning:マージ先のブランチを間違えている可能性があります
+              body: `## :warning: マージ先のブランチを間違えている可能性があります！
                 There's a possibility that the base branch of the PR is incorrect.`
             })
