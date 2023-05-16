@@ -7,7 +7,7 @@ on:
 jobs:
   check:
     name: Check base branch
-    runs-on: [self-hosted, '${{ github.run_id }}', 'runs-on=FARGATE_SPOT']
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
