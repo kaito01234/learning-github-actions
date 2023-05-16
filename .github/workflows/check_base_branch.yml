@@ -14,6 +14,25 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Check if PR branch is behind base branch
+        id: check_branch
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const pr_number = context.issue.number
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr_number
+            })
+            const { data: compare } = await github.rest.repos.compareCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              base: pr.base.sha,
+              head: pr.head.sha
+            })
+            return compare.behind_by === 0
+
       - name: echo branch of PR
         run: |
           echo "Base branch of PR: ${{ github.base_ref }}"
