@@ -8,30 +8,13 @@ jobs:
   check:
     name: Check base branch
     runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.draft == false }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
-      - name: Check if PR branch is behind base branch
-        id: check_branch
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const pr_number = context.issue.number
-            const { data: pr } = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: pr_number
-            })
-            const { data: compare } = await github.rest.repos.compareCommits({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              base: pr.base.sha,
-              head: pr.head.sha
-            })
-            return compare.behind_by === 0
 
       - name: echo branch of PR
         run: |
@@ -43,7 +26,31 @@ jobs:
           echo "Base branch SHA: ${{ github.event.pull_request.head.sha }}"
           echo "Head branch SHA: ${{ github.event.pull_request.base.sha }}"
 
+      - name: Check if PR branch is behind base branch
+        id: behind_check
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const pr_number = context.issue.number
+            console.log(pr_number)
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr_number
+            })
+            console.log(pr)
+            const { data: compare } = await github.rest.repos.compareCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              base: pr.base.sha,
+              head: pr.head.sha
+            })
+            console.log(compare)
+            return compare.behind_by === 0
+
       - name: Check branches
+        id: check_branches
+        if: ${{ steps.behind_check.outcome == 'success' }}
         run: |
           HEAD_SHA=${{ github.event.pull_request.head.sha }}
           BASE_SHA=${{ github.event.pull_request.base.sha }}
@@ -59,7 +66,7 @@ jobs:
           fi
 
       - name: Post check failure to Pull Request
-        if: failure()
+        if: ${{ steps.check_branches.outcome == 'failure' }}
         uses: actions/github-script@v6
         with:
           script: |
