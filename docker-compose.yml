@@ -17,3 +17,11 @@ services:
       context: ./apps/service3
       dockerfile: ./Dockerfile
     image: service3
+
+  nextjs:
+    build:
+      context: ./apps/nextjs
+      dockerfile: ./Dockerfile
+    image: nextjs
+    ports:
+      - 3000:3000
