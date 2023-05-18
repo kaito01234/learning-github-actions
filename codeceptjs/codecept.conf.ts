@@ -12,7 +12,7 @@ export const config: CodeceptJS.MainConfig = {
   helpers: {
     Playwright: {
       url: 'http://localhost:3000',
-      show: true,
+      show: false,
       browser: 'chromium'
     }
   },
