@@ -1,0 +1,27 @@
+name: CodeceptJS Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  codeceptjs:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Docker Build
+        run: docker-compose build
+        env:
+          DOCKER_BUILDKIT: 1
+          COMPOSE_DOCKER_CLI_BUILD: 1
+
+      - name: Docker Run
+        run: docker-compose up -d nextjs
+
+      - name: Install Dependencies
+        run: npm install
+        working-directory: codeceptjs
+
+      - name: CodeceptJS Run
+        run: npm run codeceptjs
+        working-directory: codeceptjs
