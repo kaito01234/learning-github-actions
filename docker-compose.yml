@@ -25,3 +25,19 @@ services:
     image: nextjs
     ports:
       - 3000:3000
+    environment:
+      DATABASE_URL: mysql://root:root@host.docker.internal:3306/nextjs
+
+  db:
+    image: mysql:8
+    command: mysqld --character-set-server=utf8mb4
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - 'db:/var/lib/mysql'
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root'
+
+volumes:
+  db:

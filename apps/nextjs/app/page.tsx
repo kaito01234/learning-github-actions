@@ -1,95 +1,115 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+'use client';
+
+import { useState, useEffect, ChangeEvent } from 'react';
+import { Card, Row, Col, Input, Button, Table } from 'antd';
+import { ColumnsType } from 'antd/es/table';
+
+interface DataType {
+  key: string;
+  id: number;
+  content: string;
+  createdAt: string;
+}
 
 export default function Home() {
+  const [content, setContent] = useState('');
+  const [dataSource, setDataSource] = useState<DataType[]>([]);
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      const response = await fetch('/api/notes');
+      const notes = await response.json();
+      setDataSource(notes);
+    };
+    fetchNotes();
+  }, []);
+
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setContent(event.target.value);
+  };
+
+  const handleSaveClick = async () => {
+    const response = await fetch('/api/notes', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ content }),
+    });
+
+    const notes = await response.json();
+    setDataSource(notes);
+
+    setContent('');
+  };
+
+  const handleDeleteClick = async (id: number) => {
+    const response = await fetch(`/api/notes?id=${id}`, {
+      method: 'DELETE',
+    });
+
+    const notes = await response.json();
+    setDataSource(notes);
+  };
+
+  const columns: ColumnsType<DataType> = [
+    {
+      title: 'created_at',
+      dataIndex: 'createdAt',
+      width: '20%',
+      render: (date: Date) => new Date(date).toLocaleDateString(),
+      sorter: (a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt),
+    },
+    {
+      title: 'content',
+      dataIndex: 'content',
+      width: '75%',
+    },
+    {
+      width: '5%',
+      render: (record: DataType) => (
+        <Button danger onClick={() => handleDeleteClick(record.id)}>
+          Delete
+        </Button>
+      ),
+    },
+  ];
+
+  const centeredStyle: React.CSSProperties = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh',
+  };
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
+    <div style={centeredStyle}>
+      <Card title='Note' style={{ width: 800 }}>
+        <Row>
+          <Col span={16}>
+            <Input
+              placeholder='content'
+              value={content}
+              onChange={handleInputChange}
+              name='content'
             />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
+          </Col>
+          <Col span={7} offset={1}>
+            <Button type='primary' onClick={handleSaveClick}>
+              Save
+            </Button>
+          </Col>
+        </Row>
+        <Table
+          dataSource={dataSource}
+          columns={columns}
+          rowKey={(record) => record.id}
+          pagination={{
+            pageSize: 5,
+          }}
+          style={{ marginTop: 20 }}
         />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+      </Card>
+    </div>
+  );
 }

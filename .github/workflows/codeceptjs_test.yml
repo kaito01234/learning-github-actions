@@ -18,16 +18,27 @@ jobs:
           DOCKER_BUILDKIT: 1
           COMPOSE_DOCKER_CLI_BUILD: 1
 
-      - name: Docker Run
-        run: docker-compose up -d nextjs
+      - name: Docker Run Database
+        run: docker-compose up -d db
 
-      - name: Install Dependencies
+      - name: Install Dependencies of NextJS
+        run: npm install
+        working-directory: apps/nextjs
+
+      - name: prisma migrate deploy
+        run: npm run migrate:deploy
+        working-directory: apps/nextjs
+
+      - name: Install Dependencies of CodeceptJS
         run: npm install
         working-directory: codeceptjs
 
-      - name: Install playwright browsers
-        run: npx playwright install --with-deps
+        # - name: Install playwright browsers
+        #   run: npx playwright install --with-deps
+
+      - name: Docker Run NextJS
+        run: docker-compose up -d nextjs
 
       - name: run CodeceptJS tests
-        run: npm run codeceptjs
+        run: npm run codeceptjs:puppeteer
         working-directory: codeceptjs

@@ -1,4 +1,4 @@
-import { setHeadlessWhen, setCommonPlugins } from '@codeceptjs/configure';
+import { setHeadlessWhen, setCommonPlugins } from "@codeceptjs/configure";
 // turn on headless mode when running with HEADLESS=true environment variable
 // export HEADLESS=true && npx codeceptjs run
 setHeadlessWhen(process.env.HEADLESS);
@@ -7,22 +7,22 @@ setHeadlessWhen(process.env.HEADLESS);
 setCommonPlugins();
 
 export const config: CodeceptJS.MainConfig = {
-  tests: './*_test.ts',
-  output: './output',
+  tests: "./*_test.ts",
+  output: "./output",
   helpers: {
-    Playwright: {
-      url: 'http://localhost:3000',
+    Puppeteer: {
+      url: "http://localhost:3000",
       show: true,
-      browser: 'chromium'
     },
   },
   include: {
-    I: './steps_file'
+    I: "./steps_file",
   },
-  name: 'codeceptjs',
+  name: "codeceptjs",
+  video: true,
   mocha: {
     reporterOptions: {
-        reportDir: "output"
-    }
+      reportDir: "output",
+    },
   },
-}
+};
