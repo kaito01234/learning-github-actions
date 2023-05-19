@@ -30,7 +30,9 @@ jobs:
       #   run: npx playwright install --with-deps
 
       - name: Docker Run Database
-        run: docker-compose up -d db
+        run: |
+          docker-compose up -d db
+          sleep 10s
 
       - name: prisma migrate deploy
         run: npm run migrate:deploy
