@@ -58,16 +58,16 @@ jobs:
           sleep 10s
 
       - name: run CodeceptJS tests
-        run: npm run codeceptjs:puppeteer
+        run: npm run codeceptjs:mochawesome
         working-directory: codeceptjs
 
       - name: Setup Pages
-        uses: actions/configure-pages@v1
+        uses: actions/configure-pages@v3
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: ./codeceptjs/output
+          path: codeceptjs/output
 
   deploy:
     environment:
