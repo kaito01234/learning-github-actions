@@ -12,7 +12,7 @@ export const config: CodeceptJS.MainConfig = {
   helpers: {
     Puppeteer: {
       url: "http://localhost:3000",
-      show: true,
+      show: false,
     },
   },
   include: {
