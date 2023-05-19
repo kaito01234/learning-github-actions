@@ -74,7 +74,7 @@ jobs:
         working-directory: codeceptjs
 
       - name: Upload artifact
-        if: ${{ steps.test.outcome == 'always' }}
+        if: ${{ always() && steps.test.outcome == 'always' }}
         uses: actions/upload-pages-artifact@v1
         with:
           path: codeceptjs/output
