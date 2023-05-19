@@ -32,6 +32,14 @@ jobs:
           DOCKER_BUILDKIT: 1
           COMPOSE_DOCKER_CLI_BUILD: 1
 
+      - name: Restore cached node_modules
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            apps/nextjs/node_modules
+            codeceptjs/node_modules
+          key: ${{ runner.os }}-${{ runner.arch }}-${{ github.sha }}
+
       - name: Install Dependencies of NextJS
         run: npm install
         working-directory: apps/nextjs
@@ -68,6 +76,15 @@ jobs:
         uses: actions/upload-pages-artifact@v1
         with:
           path: codeceptjs/output
+
+      - name: Save node_modules
+        if: github.ref == 'refs/heads/main'
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            apps/nextjs/node_modules
+            codeceptjs/node_modules
+          key: ${{ runner.os }}-${{ runner.arch }}-${{ github.sha }}
 
   deploy:
     environment:
