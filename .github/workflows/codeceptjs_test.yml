@@ -70,6 +70,10 @@ jobs:
           path: ./codeceptjs/output
 
   deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     runs-on: ubuntu-latest
     needs: codeceptjs_test
 
