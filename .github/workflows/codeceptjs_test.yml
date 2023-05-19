@@ -74,7 +74,7 @@ jobs:
         working-directory: codeceptjs
 
       - name: Upload artifact
-        if: ${{ steps.test.outcome == 'success' && steps.test.outcome == 'failure' }}
+        if: ${{ steps.test.outcome == 'success' || steps.test.outcome == 'failure' }}
         uses: actions/upload-pages-artifact@v1
         with:
           path: codeceptjs/output
