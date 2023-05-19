@@ -48,8 +48,8 @@ jobs:
         run: npm install
         working-directory: codeceptjs
 
-      # - name: Install playwright browsers
-      #   run: npx playwright install --with-deps
+      - name: Install playwright browsers
+        run: npx playwright install --with-deps
 
       - name: Docker Run Database
         run: |
@@ -66,13 +66,16 @@ jobs:
           sleep 10s
 
       - name: run CodeceptJS tests
+        id: test
         run: npm run codeceptjs:mochawesome
         working-directory: codeceptjs
 
       - name: Setup Pages
+        if: failure() && steps.test.outcome == 'failure'
         uses: actions/configure-pages@v3
 
       - name: Upload artifact
+        if: failure() && steps.test.outcome == 'failure'
         uses: actions/upload-pages-artifact@v1
         with:
           path: codeceptjs/output
