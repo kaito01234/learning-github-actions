@@ -9,6 +9,10 @@ on:
 env:
   SERVICE_NAME: service2
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   npm_test:
     name: npm test

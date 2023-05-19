@@ -3,6 +3,15 @@ name: CodeceptJS Test
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
   codeceptjs_test:
     timeout-minutes: 60
@@ -49,6 +58,9 @@ jobs:
       - name: run CodeceptJS tests
         run: npm run codeceptjs:puppeteer
         working-directory: codeceptjs
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v1
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
