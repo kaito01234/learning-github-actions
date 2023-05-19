@@ -53,7 +53,9 @@ jobs:
         working-directory: apps/nextjs
 
       - name: Docker Run NextJS
-        run: docker-compose up -d nextjs
+        run: |
+          docker-compose up -d nextjs
+          sleep 10s
 
       - name: run CodeceptJS tests
         run: npm run codeceptjs:puppeteer
