@@ -57,17 +57,16 @@ jobs:
       - name: Docker Run Database
         run: |
           docker-compose up -d db
+          sleep 10s
 
-      - name: Check MySQL
+      - name: prisma migrate deploy
         run: |
           echo "Waiting for MySQL..."
           while ! nc -z localhost 3306; do
             sleep 1
           done
           echo "MySQL is up."
-
-      - name: prisma migrate deploy
-        run: npm run migrate:deploy
+          npm run migrate:deploy
         working-directory: apps/nextjs
 
       - name: Docker Run NextJS
