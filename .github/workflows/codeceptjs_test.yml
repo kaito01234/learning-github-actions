@@ -52,6 +52,7 @@ jobs:
 
       - name: Install playwright browsers
         run: npx playwright install --with-deps
+        working-directory: codeceptjs
 
       - name: Docker Run Database
         run: |
