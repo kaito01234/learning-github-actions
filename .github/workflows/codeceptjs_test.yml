@@ -50,10 +50,6 @@ jobs:
         run: npm install
         working-directory: codeceptjs
 
-      - name: Install playwright browsers
-        run: npx playwright install --with-deps
-        working-directory: codeceptjs
-
       - name: Docker Run Database
         run: |
           docker-compose up -d db
@@ -73,6 +69,10 @@ jobs:
         run: |
           docker-compose up -d nextjs
           sleep 10s
+
+      - name: Install playwright browsers
+        run: npx playwright install --with-deps
+        working-directory: codeceptjs
 
       - name: run CodeceptJS tests
         id: test
