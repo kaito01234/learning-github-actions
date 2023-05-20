@@ -39,8 +39,7 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           path: |
-            apps/nextjs/node_modules
-            codeceptjs/node_modules
+            **/node_modules
           key: ${{ runner.os }}-${{ runner.arch }}
 
       - name: Install Dependencies of NextJS
