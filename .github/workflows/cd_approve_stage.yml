@@ -1,0 +1,16 @@
+name: deploy approve
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    environment:
+      name: Production
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3.0.0
+      - run: echo 'Hello'
